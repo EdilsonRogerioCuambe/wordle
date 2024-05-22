@@ -5,8 +5,11 @@ import { motion } from 'framer-motion'
 import Row from './row'
 import Keyboard from './keyboard'
 
-const wordList = ['react', 'apple', 'table', 'chair', 'stone']
-const answer = wordList[Math.floor(Math.random() * wordList.length)]
+const wordCategories: { [category: string]: string[] } = {
+  animals: ['dog', 'cat', 'mouse', 'horse', 'elephant'],
+  fruits: ['apple', 'banana', 'cherry', 'grape', 'orange'],
+  objects: ['table', 'chair', 'stone', 'pencil', 'book'],
+}
 
 const MAX_ATTEMPTS = 6
 
@@ -24,9 +27,46 @@ const Board: React.FC = () => {
   const [hint, setHint] = useState<{ letter: string; position: number } | null>(
     null,
   )
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [answer, setAnswer] = useState<string>('')
+
+  const checkGuess = useCallback(
+    (guess: string): ('correct' | 'present' | 'absent')[] => {
+      const status: ('correct' | 'present' | 'absent')[] = Array(
+        answer.length,
+      ).fill('absent')
+
+      for (let i = 0; i < answer.length; i++) {
+        if (guess[i] === answer[i]) {
+          status[i] = 'correct'
+        } else if (answer.includes(guess[i])) {
+          status[i] = 'present'
+        }
+      }
+
+      return status
+    },
+    [answer],
+  )
+
+  useEffect(() => {
+    if (selectedCategory) {
+      const newAnswer =
+        wordCategories[selectedCategory][
+          Math.floor(Math.random() * wordCategories[selectedCategory].length)
+        ]
+      setAnswer(newAnswer)
+      setGuesses([])
+      setCurrentGuess('')
+      setStatuses([])
+      setKeyStatuses({})
+      setGameOver(false)
+      setHint(null)
+    }
+  }, [selectedCategory])
 
   const handleSubmit = useCallback(() => {
-    if (currentGuess.length === 5) {
+    if (currentGuess.length === answer.length) {
       const newStatus = checkGuess(currentGuess)
       setStatuses((prevStatuses) => [...prevStatuses, newStatus])
       setGuesses((prevGuesses) => [...prevGuesses, currentGuess])
@@ -35,13 +75,13 @@ const Board: React.FC = () => {
 
       setTimeout(() => {
         setAnimateRow(false)
-      }, 1000) // Tempo total da animação de rotação
+      }, 1000)
 
       if (currentGuess === answer || guesses.length + 1 === MAX_ATTEMPTS) {
         setGameOver(true)
       }
     }
-  }, [currentGuess, guesses])
+  }, [currentGuess, answer, checkGuess, guesses.length])
 
   useEffect(() => {
     const newKeyStatuses = { ...keyStatuses }
@@ -61,22 +101,7 @@ const Board: React.FC = () => {
       })
     })
     setKeyStatuses(newKeyStatuses)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [guesses, statuses])
-
-  const checkGuess = (guess: string) => {
-    const status: ('correct' | 'present' | 'absent')[] = Array(5).fill('absent')
-
-    for (let i = 0; i < 5; i++) {
-      if (guess[i] === answer[i]) {
-        status[i] = 'correct'
-      } else if (answer.includes(guess[i])) {
-        status[i] = 'present'
-      }
-    }
-
-    return status
-  }
+  }, [guesses, statuses, keyStatuses])
 
   const handleKeyClick = (key: string) => {
     if (gameOver) return
@@ -84,7 +109,7 @@ const Board: React.FC = () => {
       handleSubmit()
     } else if (key === 'Backspace') {
       setCurrentGuess(currentGuess.slice(0, -1))
-    } else if (currentGuess.length < 5 && /^[a-zA-Z]$/.test(key)) {
+    } else if (currentGuess.length < answer.length && /^[a-zA-Z]$/.test(key)) {
       setCurrentGuess(currentGuess + key.toLowerCase())
     }
   }
@@ -106,6 +131,23 @@ const Board: React.FC = () => {
     }
   }
 
+  if (!selectedCategory) {
+    return (
+      <div className="flex flex-col items-center space-y-4">
+        <h2 className="text-2xl font-bold">Selecione uma categoria</h2>
+        {Object.keys(wordCategories).map((category) => (
+          <button
+            key={category}
+            onClick={() => setSelectedCategory(category)}
+            className="px-4 py-2 bg-blue-500 text-white font-bold rounded"
+          >
+            {category}
+          </button>
+        ))}
+      </div>
+    )
+  }
+
   return (
     <div className="flex flex-col items-center space-y-4">
       {guesses.map((guess, i) => (
@@ -122,7 +164,7 @@ const Board: React.FC = () => {
           <Row
             word={answer}
             guess={currentGuess}
-            status={Array(5).fill('absent')}
+            status={Array(answer.length).fill('absent')}
             onCellClick={handleCellClick}
             animate={animateRow}
           />
@@ -131,9 +173,11 @@ const Board: React.FC = () => {
               type="button"
               onClick={handleSubmit}
               className={`px-4 py-2 bg-blue-500 text-white font-extrabold rounded ${
-                currentGuess.length !== 5 ? 'opacity-50 cursor-not-allowed' : ''
+                currentGuess.length !== answer.length
+                  ? 'opacity-50 cursor-not-allowed'
+                  : ''
               }`}
-              disabled={currentGuess.length !== 5}
+              disabled={currentGuess.length !== answer.length}
             >
               Verificar
             </button>
