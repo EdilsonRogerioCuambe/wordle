@@ -1,5 +1,7 @@
 'use client'
-import React, { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { FaRegLightbulb } from 'react-icons/fa'
+import { motion } from 'framer-motion'
 import Row from './row'
 import Keyboard from './keyboard'
 
@@ -124,20 +126,42 @@ const Board: React.FC = () => {
             onCellClick={handleCellClick}
             animate={animateRow}
           />
-          <button
-            onClick={handleSubmit}
-            className="mt-2 px-4 py-2 bg-blue-500 text-white font-bold rounded"
-            disabled={currentGuess.length !== 5}
-          >
-            Verificar
-          </button>
+          <div className="flex space-x-4">
+            <button
+              type="button"
+              onClick={handleSubmit}
+              className={`px-4 py-2 bg-blue-500 text-white font-extrabold rounded ${
+                currentGuess.length !== 5 ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
+              disabled={currentGuess.length !== 5}
+            >
+              Verificar
+            </button>
+            <button
+              title="Dica"
+              type="button"
+              onClick={handleHint}
+              className={`px-4 py-2 bg-yellow-500 text-white font-extrabold rounded ${
+                hint !== null ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
+              disabled={gameOver || hint !== null}
+            >
+              <FaRegLightbulb className="inline-block" />
+            </button>
+          </div>
         </>
       )}
       {hint && (
-        <div className="text-lg mt-4 text-blue-600">
-          Dica: A letra {hint.letter.toUpperCase()} está na posição{' '}
-          {hint.position + 1}.
-        </div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="flex items-center uppercase space-x-2 text-lg"
+        >
+          <span>Dica:</span>
+          <span className="text-green-400 font-extrabold">{hint.letter}</span>
+          <span>na posição {hint.position + 1}</span>
+        </motion.div>
       )}
       <div className="text-lg mt-4">
         {gameOver &&
@@ -145,13 +169,6 @@ const Board: React.FC = () => {
             ? 'Você acertou!'
             : 'Você perdeu! A palavra era ' + answer)}
       </div>
-      <button
-        onClick={handleHint}
-        className="mt-2 px-4 py-2 bg-green-500 text-white font-bold rounded"
-        disabled={gameOver || hint !== null}
-      >
-        Pedir Dica
-      </button>
       <Keyboard onKeyClick={handleKeyClick} keyStatuses={keyStatuses} />
     </div>
   )
