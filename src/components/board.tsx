@@ -4,12 +4,8 @@ import { FaRegLightbulb } from 'react-icons/fa'
 import { motion } from 'framer-motion'
 import Row from './row'
 import Keyboard from './keyboard'
-
-const wordCategories: { [category: string]: string[] } = {
-  animals: ['dog', 'cat', 'mouse', 'horse', 'elephant'],
-  fruits: ['apple', 'banana', 'cherry', 'grape', 'orange'],
-  objects: ['table', 'chair', 'stone', 'pencil', 'book'],
-}
+import Image from 'next/image'
+import categories from '@/utils/categories'
 
 const MAX_ATTEMPTS = 6
 
@@ -52,8 +48,8 @@ const Board: React.FC = () => {
   useEffect(() => {
     if (selectedCategory) {
       const newAnswer =
-        wordCategories[selectedCategory][
-          Math.floor(Math.random() * wordCategories[selectedCategory].length)
+        categories[selectedCategory].words[
+          Math.floor(Math.random() * categories[selectedCategory].words.length)
         ]
       setAnswer(newAnswer)
       setGuesses([])
@@ -133,16 +129,27 @@ const Board: React.FC = () => {
 
   if (!selectedCategory) {
     return (
-      <div className="flex flex-col items-center space-y-4">
-        <h2 className="text-2xl font-bold">Selecione uma categoria</h2>
-        {Object.keys(wordCategories).map((category) => (
-          <button
+      <div className="flex flex-wrap justify-center space-x-4">
+        {Object.keys(categories).map((category) => (
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            // animação no hover
+            whileHover={{ scale: 1.1 }}
             key={category}
+            type="button"
             onClick={() => setSelectedCategory(category)}
-            className="px-4 py-2 bg-blue-500 text-white font-bold rounded"
+            className="flex flex-col items-center space-y-2 p-4 border-2 border-[#f5f5f5] rounded-lg cursor-pointer"
           >
-            {category}
-          </button>
+            <Image
+              src={categories[category].image}
+              alt={category}
+              width={50}
+              height={50}
+            />
+            <span>{category}</span>
+          </motion.button>
         ))}
       </div>
     )
