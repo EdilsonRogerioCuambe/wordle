@@ -11,18 +11,29 @@ const MAX_ATTEMPTS = 6
 const Board: React.FC = () => {
   const [guesses, setGuesses] = useState<string[]>([])
   const [currentGuess, setCurrentGuess] = useState<string>('')
+  const [statuses, setStatuses] = useState<
+    ('correct' | 'present' | 'absent')[][]
+  >([])
   const [keyStatuses, setKeyStatuses] = useState<{
     [key: string]: 'correct' | 'present' | 'absent' | 'default'
   }>({})
   const [gameOver, setGameOver] = useState<boolean>(false)
+  const [animateRow, setAnimateRow] = useState<boolean>(false)
   const [hint, setHint] = useState<{ letter: string; position: number } | null>(
     null,
   )
 
   const handleSubmit = useCallback(() => {
     if (currentGuess.length === 5) {
+      const newStatus = checkGuess(currentGuess)
+      setStatuses((prevStatuses) => [...prevStatuses, newStatus])
       setGuesses((prevGuesses) => [...prevGuesses, currentGuess])
       setCurrentGuess('')
+      setAnimateRow(true)
+
+      setTimeout(() => {
+        setAnimateRow(false)
+      }, 1000) // Tempo total da animação de rotação
 
       if (currentGuess === answer || guesses.length + 1 === MAX_ATTEMPTS) {
         setGameOver(true)
@@ -31,20 +42,25 @@ const Board: React.FC = () => {
   }, [currentGuess, guesses])
 
   useEffect(() => {
-    const newStatuses = { ...keyStatuses }
-    guesses.forEach((guess) => {
-      guess.split('').forEach((letter, index) => {
-        if (answer.includes(letter)) {
-          newStatuses[letter] = answer[index] === letter ? 'correct' : 'present'
-        } else {
-          newStatuses[letter] = 'absent'
+    const newKeyStatuses = { ...keyStatuses }
+    guesses.forEach((guess, i) => {
+      statuses[i].forEach((status, index) => {
+        const letter = guess[index]
+        if (status === 'correct') {
+          newKeyStatuses[letter] = 'correct'
+        } else if (
+          status === 'present' &&
+          newKeyStatuses[letter] !== 'correct'
+        ) {
+          newKeyStatuses[letter] = 'present'
+        } else if (status === 'absent' && !newKeyStatuses[letter]) {
+          newKeyStatuses[letter] = 'absent'
         }
       })
     })
-    setKeyStatuses(newStatuses)
-    setHint(null)
+    setKeyStatuses(newKeyStatuses)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [guesses])
+  }, [guesses, statuses])
 
   const checkGuess = (guess: string) => {
     const status: ('correct' | 'present' | 'absent')[] = Array(5).fill('absent')
@@ -91,7 +107,13 @@ const Board: React.FC = () => {
   return (
     <div className="flex flex-col items-center space-y-4">
       {guesses.map((guess, i) => (
-        <Row key={i} word={answer} guess={guess} status={checkGuess(guess)} />
+        <Row
+          key={i}
+          word={answer}
+          guess={guess}
+          status={statuses[i]}
+          animate={true}
+        />
       ))}
       {guesses.length < MAX_ATTEMPTS && !gameOver && (
         <>
@@ -100,36 +122,21 @@ const Board: React.FC = () => {
             guess={currentGuess}
             status={Array(5).fill('absent')}
             onCellClick={handleCellClick}
+            animate={animateRow}
           />
-          <div className="flex justify-center space-x-2">
-            <button
-              title="Verificar"
-              type="button"
-              onClick={handleSubmit}
-              className={`px-4 py-2 bg-green-500 text-white font-bold rounded ${
-                currentGuess.length !== 5 ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
-              disabled={currentGuess.length !== 5}
-            >
-              Verificar
-            </button>
-            <button
-              title="Dica"
-              type="button"
-              onClick={handleHint}
-              className={`px-4 py-2 bg-blue-500 text-white font-bold rounded ${
-                hint ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
-            >
-              Dica
-            </button>
-          </div>
+          <button
+            onClick={handleSubmit}
+            className="mt-2 px-4 py-2 bg-blue-500 text-white font-bold rounded"
+            disabled={currentGuess.length !== 5}
+          >
+            Verificar
+          </button>
         </>
       )}
       {hint && (
-        <div className="text-lg">
-          A letra <strong>{hint.letter}</strong> está na posição{' '}
-          <strong>{hint.position + 1}</strong>
+        <div className="text-lg mt-4 text-blue-600">
+          Dica: A letra {hint.letter.toUpperCase()} está na posição{' '}
+          {hint.position + 1}.
         </div>
       )}
       <div className="text-lg mt-4">
@@ -138,6 +145,13 @@ const Board: React.FC = () => {
             ? 'Você acertou!'
             : 'Você perdeu! A palavra era ' + answer)}
       </div>
+      <button
+        onClick={handleHint}
+        className="mt-2 px-4 py-2 bg-green-500 text-white font-bold rounded"
+        disabled={gameOver || hint !== null}
+      >
+        Pedir Dica
+      </button>
       <Keyboard onKeyClick={handleKeyClick} keyStatuses={keyStatuses} />
     </div>
   )

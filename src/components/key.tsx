@@ -16,9 +16,9 @@ const Key: React.FC<KeyProps> = ({ value, status, onClick }) => {
       case 'present':
         return 'bg-yellow-500'
       case 'absent':
-        return 'bg-[#121214]'
+        return 'border-2 border-[#f5f5f5]'
       default:
-        return 'bg-[#121214]'
+        return 'border-2 border-[#f5f5f5]'
     }
   }
 
