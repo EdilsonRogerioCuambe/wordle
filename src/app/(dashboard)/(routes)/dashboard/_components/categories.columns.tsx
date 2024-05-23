@@ -1,5 +1,4 @@
 'use client'
-import { Category } from '@prisma/client'
 import {
   Image as LucidImageIcon,
   ArrowUpDown,
@@ -19,6 +18,7 @@ import {
 import Link from 'next/link'
 import axios from 'axios'
 import toast from 'react-hot-toast'
+import { Category } from '@prisma/client'
 
 export const categoriesColumns: ColumnDef<Category>[] = [
   {
