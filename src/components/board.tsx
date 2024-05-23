@@ -96,7 +96,8 @@ const Board: React.FC = () => {
       })
     })
     setKeyStatuses(newKeyStatuses)
-  }, [guesses, statuses, keyStatuses])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [guesses, statuses])
 
   const handleKeyClick = (key: string) => {
     if (gameOver) return
