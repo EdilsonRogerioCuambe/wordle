@@ -3,6 +3,15 @@ import Board from '@/components/board'
 
 export default async function Home() {
   const categories = await prisma.category.findMany({
+    where: {
+      words: {
+        some: {
+          value: {
+            not: '',
+          },
+        },
+      },
+    },
     include: {
       words: true,
     },
