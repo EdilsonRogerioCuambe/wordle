@@ -23,7 +23,9 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
-    const words = await prisma.word.findMany()
+    const words = await prisma.word.findMany({
+      include: { category: true },
+    })
 
     return NextResponse.json(words)
   } catch (error) {

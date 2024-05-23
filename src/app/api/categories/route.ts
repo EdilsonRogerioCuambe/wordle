@@ -29,7 +29,9 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
-    const categories = await prisma.category.findMany()
+    const categories = await prisma.category.findMany({
+      orderBy: { id: 'asc' },
+    })
 
     return NextResponse.json(categories)
   } catch (error) {
