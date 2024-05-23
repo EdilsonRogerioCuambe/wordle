@@ -3,14 +3,14 @@ import prisma from '@/utils/prisma'
 
 export async function GET(
   request: Request,
-  { params }: { params: { value: string } },
+  { params }: { params: { id: string } },
 ) {
-  const { value } = params
+  const { id } = params
 
   try {
     const word = await prisma.word.findUnique({
       where: {
-        value,
+        id,
       },
     })
 
@@ -29,68 +29,76 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { name: string } },
+  { params }: { params: { id: string } },
 ) {
   const values = await request.json()
-  const { name } = params
+  const { id } = params
 
   try {
-    const category = await prisma.category.findUnique({
+    const word = await prisma.word.findUnique({
       where: {
-        name,
+        id,
       },
     })
 
-    if (!category) {
-      return new NextResponse('Category not found', { status: 404 })
+    if (!word) {
+      return new NextResponse('Word not found', { status: 404 })
     }
 
-    const updatedCategory = await prisma.category.update({
+    const updatedWord = await prisma.word.update({
       where: {
-        name: category.name,
+        id: word.id,
       },
       data: {
-        ...values,
+        value: values.value,
+        hints: values.hints,
+        categoryId: values.categoryId,
       },
     })
 
-    return NextResponse.json(updatedCategory)
+    return NextResponse.json(updatedWord)
   } catch (error) {
     if (error instanceof Error) {
       return new NextResponse(error.message, { status: 500 })
     }
-    return new NextResponse('Failed to update category', { status: 500 })
+    return new NextResponse('Failed to update word', { status: 500 })
   }
 }
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { name: string } },
+  { params }: { params: { id: string } },
 ) {
-  const { name } = params
+  const { id } = params
+
+  if (!id) {
+    return new NextResponse('Please provide the word name', {
+      status: 400,
+    })
+  }
 
   try {
-    const category = await prisma.category.findUnique({
+    const word = await prisma.word.findUnique({
       where: {
-        name,
+        id,
       },
     })
 
-    if (!category) {
-      return new NextResponse('Category not found', { status: 404 })
+    if (!word) {
+      return new NextResponse('Word not found', { status: 404 })
     }
 
-    const deletedCategory = await prisma.category.delete({
+    await prisma.word.delete({
       where: {
-        name: category.name,
+        id: word.id,
       },
     })
 
-    return NextResponse.json(deletedCategory)
+    return NextResponse.json({ message: 'Word deleted successfully!' })
   } catch (error) {
     if (error instanceof Error) {
       return new NextResponse(error.message, { status: 500 })
     }
-    return new NextResponse('Failed to delete category', { status: 500 })
+    return new NextResponse('Failed to delete word', { status: 500 })
   }
 }

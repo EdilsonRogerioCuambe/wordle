@@ -13,12 +13,12 @@ export default function EditWord() {
   const [selectedCategory, setSelectedCategory] = useState('')
   const [newHint, setNewHint] = useState('')
   const router = useRouter()
-  const { value } = useParams()
+  const { id } = useParams()
 
   useEffect(() => {
     async function fetchWord() {
       try {
-        const { data } = await axios.get(`/api/words/${value}`)
+        const { data } = await axios.get(`/api/words/${id}`)
         setWord(data.value)
         setHints(data.hints || [])
         setSelectedCategory(data.categoryId)
@@ -41,7 +41,7 @@ export default function EditWord() {
     }
     fetchWord()
     fetchCategories()
-  }, [router, value])
+  }, [router, id])
 
   const handleAddHint = async () => {
     if (newHint.trim() === '') {
@@ -51,7 +51,7 @@ export default function EditWord() {
 
     try {
       const updatedHints = [...hints, newHint]
-      await axios.patch(`/api/words/${value}`, {
+      await axios.patch(`/api/words/${id}`, {
         hints: updatedHints,
       })
       setHints(updatedHints)
@@ -74,7 +74,7 @@ export default function EditWord() {
     updatedHints.splice(index, 1)
 
     try {
-      await axios.patch(`/api/words/${value}`, {
+      await axios.patch(`/api/words/${id}`, {
         hints: updatedHints,
       })
       setHints(updatedHints)
@@ -93,12 +93,11 @@ export default function EditWord() {
     }
 
     try {
-      await axios.patch(`/api/words/${value}`, {
+      await axios.patch(`/api/words/${id}`, {
         word,
         categoryId: selectedCategory,
       })
       toast.success('Palavra atualizada com sucesso!')
-      router.push('/')
     } catch (error) {
       console.error(error)
       toast.error('Falha ao atualizar palavra')
@@ -106,7 +105,7 @@ export default function EditWord() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2 md:px-0 px-8">
+    <>
       <h1 className="md:text-4xl text-2xl font-bold mb-8">Editar Palavra</h1>
       <form onSubmit={handleSubmit} className="w-full max-w-3xl text-[#f5f5f5]">
         <div className="flex flex-wrap -mx-2">
@@ -216,6 +215,6 @@ export default function EditWord() {
           </div>
         </div>
       </form>
-    </div>
+    </>
   )
 }
