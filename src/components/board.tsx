@@ -42,7 +42,7 @@ const Board: React.FC = () => {
     [answer],
   )
 
-  useEffect(() => {
+  const setNewWord = useCallback(() => {
     if (selectedCategory) {
       const newAnswer =
         categories[selectedCategory].words[
@@ -59,6 +59,10 @@ const Board: React.FC = () => {
       setHintIndex(0)
     }
   }, [selectedCategory])
+
+  useEffect(() => {
+    setNewWord()
+  }, [selectedCategory, setNewWord])
 
   const handleSubmit = useCallback(() => {
     if (currentGuess.length === answer.length) {
@@ -122,6 +126,10 @@ const Board: React.FC = () => {
     if (hintIndex < hints.length) {
       setHintIndex(hintIndex + 1)
     }
+  }
+
+  const handleNext = () => {
+    setNewWord()
   }
 
   if (!selectedCategory) {
@@ -217,12 +225,28 @@ const Board: React.FC = () => {
           </span>
         </motion.div>
       )}
-      <div className="text-lg mt-4">
+      <div
+        className={
+          'text-xl font-extrabold uppercase' +
+          (gameOver && guesses[guesses.length - 1] === answer
+            ? ' text-green-400'
+            : ' text-red-400')
+        }
+      >
         {gameOver &&
           (guesses[guesses.length - 1] === answer
             ? 'Você acertou!'
             : 'Você perdeu! A palavra era ' + answer)}
       </div>
+      {gameOver && (
+        <button
+          type="button"
+          onClick={handleNext}
+          className="px-4 py-2 bg-violet-400 text-white font-extrabold rounded mt-4"
+        >
+          Próxima Palavra
+        </button>
+      )}
       <Keyboard onKeyClick={handleKeyClick} keyStatuses={keyStatuses} />
     </div>
   )
