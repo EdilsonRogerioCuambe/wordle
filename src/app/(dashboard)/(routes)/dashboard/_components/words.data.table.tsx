@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import Link from 'next/link'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -54,13 +55,21 @@ export function DataWordsTable<TData, TValue>({
     <div className="text-[#f5f5f5] my-5 border-2 p-4 border-[#f5f5f5] rounded-lg">
       <div className="flex items-center py-4 justify-between gap-x-2">
         <Input
-          placeholder='Pesquisar categoria por "nome"'
+          placeholder='Pesquisar palavra por "nome"'
           value={(table.getColumn('value')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
             table.getColumn('value')?.setFilterValue(event.target.value)
           }
           className="max-w-sm w-full bg-transparent border-2 text-[#f5f5f5] placeholder:text-[#f5f5f5] border-[#f5f5f5]"
         />
+        <Link href="/dashboard/add-word" passHref>
+          <Button
+            variant="outline"
+            className="bg-transparent transition-all duration-300 ease-in-out hover:text-[#f5f5f5] hover:bg-[#121214]"
+          >
+            Adicionar Nova Palavra
+          </Button>
+        </Link>
       </div>
       <div className="my-4">
         <Table>

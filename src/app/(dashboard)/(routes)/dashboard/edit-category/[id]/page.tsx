@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { useRouter, useParams } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import toast from 'react-hot-toast'
 import axios from 'axios'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
@@ -11,7 +11,6 @@ import { AiOutlineLoading3Quarters } from 'react-icons/ai'
 import Link from 'next/link'
 
 export default function EditCategory() {
-  const router = useRouter()
   const { id } = useParams()
   const [name, setName] = useState('')
   const [image, setImage] = useState<string | null>(null)
@@ -67,7 +66,6 @@ export default function EditCategory() {
 
       await axios.patch(`/api/categories/${id}`, { name, image: imageUrl })
       toast.success('Category updated successfully!')
-      router.push('/')
     } catch (error) {
       console.error(error)
       toast.error('Failed to update category')

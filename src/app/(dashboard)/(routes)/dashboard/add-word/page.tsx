@@ -57,7 +57,7 @@ export default function Page() {
       </h1>
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md p-6 rounded-lg shadow-md border-[#333333] bg-[#222222] text-[#f5f5f5]"
+        className="w-full max-w-md p-6 rounded-lg border-2 border-[#f5f5f5] text-[#f5f5f5]"
       >
         <div className="mb-4">
           <label

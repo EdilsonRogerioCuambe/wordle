@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import Link from 'next/link'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -61,6 +62,14 @@ export function DataCategoriesTable<TData, TValue>({
           }
           className="max-w-sm w-full bg-transparent border-2 placeholder:text-[#f5f5f5] text-[#f5f5f5] border-[#f5f5f5]"
         />
+        <Link href="/dashboard/add-category" passHref>
+          <Button
+            variant="outline"
+            className="bg-transparent hover:bg-[#121214] hover:text-[#f5f5f5] transition-all duration-300 ease-in-out"
+          >
+            Adicionar Categoria
+          </Button>
+        </Link>
       </div>
       <div className="my-4">
         <Table>

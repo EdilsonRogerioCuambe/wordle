@@ -1,6 +1,5 @@
 'use client'
 import { useState } from 'react'
-import { redirect } from 'next/navigation'
 import toast from 'react-hot-toast'
 import axios from 'axios'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
@@ -41,9 +40,8 @@ export default function AddCategory() {
 
       const url = await getDownloadURL(storageRef)
 
-      await axios.post('/api/add-category', { name, image: url })
+      await axios.post('/api/categories', { name, image: url })
       toast.success('Category added successfully!')
-      redirect('/')
     } catch (error) {
       console.error(error)
       toast.error('Failed to add category')
@@ -61,7 +59,7 @@ export default function AddCategory() {
       </h1>
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md p-6 rounded-lg shadow-md border-[#333333] bg-[#222222] text-[#f5f5f5]"
+        className="w-full max-w-md p-6 rounded-lg border-2 border-[#f5f5f5] text-[#f5f5f5]"
       >
         <div className="mb-4">
           <label
@@ -118,8 +116,8 @@ export default function AddCategory() {
             disabled={!name || !image}
             className={`${
               !name || !image
-                ? 'cursor-not-allowed bg-[#333333] text-[#f5f5f5]'
-                : 'border-2 border-[#f5f5f5] hover:bg-[#333333] hover:border-[#f5f5f5] hover:text-white'
+                ? 'cursor-not-allowed bg-[#121214] text-[#f5f5f5]'
+                : 'border-2 border-[#f5f5f5] hover:bg-[#202024] hover:border-[#f5f5f5] hover:text-white'
             } text-white flex justify-center items-center font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`}
           >
             {loading ? (
