@@ -152,6 +152,18 @@ const Board: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center space-y-4">
+      {/** mostrar a categoria selecionada */}
+      <div className="flex items-center space-x-2">
+        <Image
+          src={categories[selectedCategory].image}
+          alt={selectedCategory}
+          width={50}
+          height={50}
+        />
+        <span className="text-xl font-extrabold uppercase">
+          {selectedCategory}
+        </span>
+      </div>
       {guesses.map((guess, i) => (
         <Row
           key={i}
@@ -175,6 +187,7 @@ const Board: React.FC = () => {
               type="button"
               onClick={handleSubmit}
               className={`px-4 py-2 bg-blue-500 text-white font-extrabold rounded ${currentGuess.length !== answer.length ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={currentGuess.length !== answer.length}
             >
               Verificar
             </button>

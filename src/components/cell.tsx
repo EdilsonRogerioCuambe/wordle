@@ -1,6 +1,4 @@
-'use client'
 import { motion } from 'framer-motion'
-import React from 'react'
 
 interface CellProps {
   value: string
@@ -32,7 +30,7 @@ const Cell: React.FC<CellProps> = ({
 
   return (
     <motion.div
-      className={`w-14 h-14 uppercase rounded-lg flex items-center justify-center border font-bold text-xl relative ${getStatusClass()}`}
+      className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 uppercase rounded-lg flex items-center justify-center border font-bold text-sm sm:text-lg md:text-xl relative ${getStatusClass()}`}
       initial={animate ? { rotateY: 0 } : false}
       animate={animate ? { rotateY: 180 } : undefined}
       transition={animate ? { duration: 0.5, delay } : undefined}

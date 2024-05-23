@@ -1,4 +1,3 @@
-'use client'
 import React from 'react'
 import Key from './key'
 
@@ -15,9 +14,12 @@ interface KeyboardProps {
 
 const Keyboard: React.FC<KeyboardProps> = ({ onKeyClick, keyStatuses }) => {
   return (
-    <div className="flex flex-col items-center mt-4 space-y-2">
+    <div className="flex flex-col items-center mt-4 space-y-1 sm:space-y-2">
       {keys.map((row, rowIndex) => (
-        <div key={rowIndex} className="flex justify-center space-x-1">
+        <div
+          key={rowIndex}
+          className="flex justify-center space-x-1 sm:space-x-2"
+        >
           {row.map((key) => (
             <Key
               key={key}

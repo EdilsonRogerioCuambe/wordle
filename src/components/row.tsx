@@ -1,4 +1,3 @@
-'use client'
 import React from 'react'
 import Cell from './cell'
 
@@ -12,7 +11,7 @@ interface RowProps {
 
 const Row: React.FC<RowProps> = ({ guess, status, onCellClick, animate }) => {
   return (
-    <div className="flex space-x-2">
+    <div className="flex space-x-1 sm:space-x-2">
       {Array.from({ length: guess.length }, (_, i) => (
         <Cell
           key={i}
