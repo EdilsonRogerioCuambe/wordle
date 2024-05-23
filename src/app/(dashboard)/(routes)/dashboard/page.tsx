@@ -4,6 +4,8 @@ import { DataCategoriesTable } from './_components/categories.data.table'
 import { DataWordsTable } from './_components/words.data.table'
 import { wordsColumns } from './_components/words.columns'
 
+export const dynamic = 'force-dynamic'
+
 export default async function Dashboard() {
   const categories = await prisma.category.findMany()
   const words = await prisma.word.findMany({
