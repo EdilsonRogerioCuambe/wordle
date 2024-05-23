@@ -1,20 +1,5 @@
-import { StaticImageData } from 'next/image'
-import animais from '@/assets/animais.png'
-import frutas from '@/assets/frutas.png'
-import objetos from '@/assets/objetos.png'
-import cores from '@/assets/cores.png'
-import paises from '@/assets/paises.png'
-import profissoes from '@/assets/profissoes.png'
-import esportes from '@/assets/esportes.png'
-
-const categories: {
-  [key: string]: {
-    words: string[]
-    image: StaticImageData
-    hints: { [key: string]: string[] }
-  }
-} = {
-  animais: {
+const categories = {
+  Animais: {
     words: [
       'cachorro',
       'gato',
@@ -48,7 +33,6 @@ const categories: {
       'avestruz',
       'veado',
     ],
-    image: animais,
     hints: {
       cachorro: [
         'o melhor amigo do homem',
@@ -262,7 +246,7 @@ const categories: {
       ],
     },
   },
-  frutas: {
+  Frutas: {
     words: [
       'maca',
       'banana',
@@ -289,7 +273,6 @@ const categories: {
       'mamao',
       'nectarina',
     ],
-    image: frutas,
     hints: {
       maca: [
         'fruta que mantém o médico longe',
@@ -461,7 +444,7 @@ const categories: {
       ],
     },
   },
-  objetos: {
+  Objetos: {
     words: [
       'mesa',
       'cadeira',
@@ -484,7 +467,6 @@ const categories: {
       'microondas',
       'liquidificador',
     ],
-    image: objetos,
     hints: {
       mesa: [
         'móvel onde se come ou trabalha',
@@ -628,7 +610,7 @@ const categories: {
       ],
     },
   },
-  cores: {
+  Cores: {
     words: [
       'vermelho',
       'azul',
@@ -654,7 +636,6 @@ const categories: {
       'caramelo',
       'grafite',
     ],
-    image: cores,
     hints: {
       vermelho: [
         'cor do sangue',
@@ -819,7 +800,7 @@ const categories: {
       ],
     },
   },
-  paises: {
+  Paises: {
     words: [
       'brasil',
       'argentina',
@@ -842,7 +823,6 @@ const categories: {
       'uruguai',
       'paraguai',
     ],
-    image: paises,
     hints: {
       brasil: [
         'país da América do Sul',
@@ -986,7 +966,7 @@ const categories: {
       ],
     },
   },
-  profissoes: {
+  Profissoes: {
     words: [
       'medico',
       'engenheiro',
@@ -1014,7 +994,6 @@ const categories: {
       'fotografo',
       'piloto',
     ],
-    image: profissoes,
     hints: {
       medico: [
         'cuida da saúde das pessoas',
@@ -1193,7 +1172,7 @@ const categories: {
       ],
     },
   },
-  esportes: {
+  Esportes: {
     words: [
       'futebol',
       'basquete',
@@ -1217,7 +1196,6 @@ const categories: {
       'patinacao',
       'esgrima',
     ],
-    image: esportes,
     hints: {
       futebol: [
         'esporte com bola',
@@ -1370,4 +1348,4 @@ const categories: {
   },
 }
 
-export default categories
+module.exports = categories
