@@ -1,4 +1,4 @@
-import prisma from '@/utils/prisma'
+import { prisma } from '@/utils/prisma'
 import Board from '@/components/board'
 
 export default async function Home() {

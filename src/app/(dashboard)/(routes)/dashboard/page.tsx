@@ -1,4 +1,4 @@
-import prisma from '@/utils/prisma'
+import { prisma } from '@/utils/prisma'
 import { categoriesColumns } from './_components/categories.columns'
 import { DataCategoriesTable } from './_components/categories.data.table'
 import { DataWordsTable } from './_components/words.data.table'
