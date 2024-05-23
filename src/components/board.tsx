@@ -20,18 +20,16 @@ const Board: React.FC = () => {
   }>({})
   const [gameOver, setGameOver] = useState<boolean>(false)
   const [animateRow, setAnimateRow] = useState<boolean>(false)
-  const [hint, setHint] = useState<{ letter: string; position: number } | null>(
-    null,
-  )
+  const [hintIndex, setHintIndex] = useState<number>(0)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [answer, setAnswer] = useState<string>('')
+  const [hints, setHints] = useState<string[]>([])
 
   const checkGuess = useCallback(
     (guess: string): ('correct' | 'present' | 'absent')[] => {
       const status: ('correct' | 'present' | 'absent')[] = Array(
         answer.length,
       ).fill('absent')
-
       for (let i = 0; i < answer.length; i++) {
         if (guess[i] === answer[i]) {
           status[i] = 'correct'
@@ -39,7 +37,6 @@ const Board: React.FC = () => {
           status[i] = 'present'
         }
       }
-
       return status
     },
     [answer],
@@ -51,13 +48,15 @@ const Board: React.FC = () => {
         categories[selectedCategory].words[
           Math.floor(Math.random() * categories[selectedCategory].words.length)
         ]
+      const newHints = categories[selectedCategory].hints[newAnswer]
       setAnswer(newAnswer)
+      setHints(newHints)
       setGuesses([])
       setCurrentGuess('')
       setStatuses([])
       setKeyStatuses({})
       setGameOver(false)
-      setHint(null)
+      setHintIndex(0)
     }
   }, [selectedCategory])
 
@@ -119,11 +118,8 @@ const Board: React.FC = () => {
   }
 
   const handleHint = () => {
-    for (let i = 0; i < answer.length; i++) {
-      if (!guesses.some((guess) => guess[i] === answer[i])) {
-        setHint({ letter: answer[i], position: i })
-        break
-      }
+    if (hintIndex < hints.length) {
+      setHintIndex(hintIndex + 1)
     }
   }
 
@@ -135,7 +131,6 @@ const Board: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            // animação no hover
             whileHover={{ scale: 1.1 }}
             key={category}
             type="button"
@@ -179,11 +174,7 @@ const Board: React.FC = () => {
             <button
               type="button"
               onClick={handleSubmit}
-              className={`px-4 py-2 bg-blue-500 text-white font-extrabold rounded ${
-                currentGuess.length !== answer.length
-                  ? 'opacity-50 cursor-not-allowed'
-                  : ''
-              }`}
+              className={`px-4 py-2 bg-blue-500 text-white font-extrabold rounded ${currentGuess.length !== answer.length ? 'opacity-50 cursor-not-allowed' : ''}`}
               disabled={currentGuess.length !== answer.length}
             >
               Verificar
@@ -192,17 +183,15 @@ const Board: React.FC = () => {
               title="Dica"
               type="button"
               onClick={handleHint}
-              className={`px-4 py-2 bg-yellow-500 text-white font-extrabold rounded ${
-                hint !== null ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
-              disabled={gameOver || hint !== null}
+              className={`px-4 py-2 bg-yellow-500 text-white font-extrabold rounded ${hintIndex >= hints.length ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={gameOver || hintIndex >= hints.length}
             >
               <FaRegLightbulb className="inline-block" />
             </button>
           </div>
         </>
       )}
-      {hint && (
+      {hintIndex > 0 && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -210,8 +199,9 @@ const Board: React.FC = () => {
           className="flex items-center uppercase space-x-2 text-lg"
         >
           <span>Dica:</span>
-          <span className="text-green-400 font-extrabold">{hint.letter}</span>
-          <span>na posição {hint.position + 1}</span>
+          <span className="text-green-400 font-extrabold">
+            {hints[hintIndex - 1]}
+          </span>
         </motion.div>
       )}
       <div className="text-lg mt-4">
