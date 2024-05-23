@@ -132,6 +132,30 @@ const Board: React.FC = () => {
     setNewWord()
   }
 
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (gameOver) return
+      const { key } = event
+      if (key === 'Enter') {
+        handleSubmit()
+      } else if (key === 'Backspace') {
+        setCurrentGuess((prev) => prev.slice(0, -1))
+      } else if (key.length === 1 && /^[a-zA-Z]$/.test(key)) {
+        setCurrentGuess((prev) => {
+          if (prev.length < answer.length) {
+            return prev + key.toLowerCase()
+          }
+          return prev
+        })
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyPress)
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress)
+    }
+  }, [handleSubmit, gameOver, answer.length])
+
   if (!selectedCategory) {
     return (
       <div className="flex flex-wrap justify-center space-x-4 sm:space-x-8">
