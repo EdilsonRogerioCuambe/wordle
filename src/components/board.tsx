@@ -6,6 +6,7 @@ import Row from './row'
 import Keyboard from './keyboard'
 import Image from 'next/image'
 import categories from '@/utils/categories'
+import Modal from './modal'
 
 const MAX_ATTEMPTS = 6
 
@@ -193,65 +194,11 @@ const Board: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center space-y-4">
-      {isModalOpen && (
-        <motion.div
-          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <motion.div
-            className="bg-[#333333] p-4 rounded-lg font-mono text-white max-w-lg"
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="text-2xl font-extrabold mb-4">Como Jogar</h2>
-            <p className="mb-2">Bem-vindo ao WordQuest!</p>
-            <ul className="list-disc pl-6">
-              <li>
-                Você tem um total de {MAX_ATTEMPTS} tentativas para adivinhar a
-                palavra correta.
-              </li>
-              <li>
-                Use o teclado virtual ou seu próprio teclado para digitar as
-                palavras.
-              </li>
-              <li>
-                Após digitar a palavra, pressione a tecla Enter para enviar a
-                palavra.
-              </li>
-              <li>
-                Cada letra da palavra será marcada como:
-                <ul className="list-disc pl-6">
-                  <li>
-                    <span className="text-green-500 font-extrabold">Verde</span>
-                    : a letra está correta e na posição correta.
-                  </li>
-                  <li>
-                    <span className="text-yellow-500 font-extrabold">
-                      Amarela
-                    </span>
-                    : a letra está correta, mas na posição errada.
-                  </li>
-                  <li>
-                    <span className="font-extrabold">Cinza</span>: a letra não
-                    está na palavra.
-                  </li>
-                </ul>
-              </li>
-              <li>Você pode usar dicas clicando no botão de dica.</li>
-              <li>Divirta-se e boa sorte!</li>
-            </ul>
-            <button
-              onClick={closeModal}
-              className="mt-4 px-4 py-2 bg-blue-500 text-white font-extrabold rounded"
-            >
-              Começar
-            </button>
-          </motion.div>
-        </motion.div>
-      )}
+      <Modal
+        isModalOpen={isModalOpen}
+        closeModal={closeModal}
+        MAX_ATTEMPTS={MAX_ATTEMPTS}
+      />
       <div className="flex items-center space-x-2">
         <Image
           src={categories[selectedCategory].image}
