@@ -5,12 +5,24 @@ import { motion } from 'framer-motion'
 import Row from './row'
 import Keyboard from './keyboard'
 import Image from 'next/image'
-import categories from '@/utils/categories'
 import Modal from './modal'
 
 const MAX_ATTEMPTS = 6
 
-const Board: React.FC = () => {
+interface Word {
+  id: string
+  value: string
+  hints: string[]
+}
+
+interface Category {
+  id: string
+  name: string
+  image: string
+  words: Word[]
+}
+
+const Board = ({ categories }: { categories: Category[] }) => {
   const [guesses, setGuesses] = useState<string[]>([])
   const [currentGuess, setCurrentGuess] = useState<string>('')
   const [statuses, setStatuses] = useState<
@@ -46,21 +58,24 @@ const Board: React.FC = () => {
 
   const setNewWord = useCallback(() => {
     if (selectedCategory) {
-      const newAnswer =
-        categories[selectedCategory].words[
-          Math.floor(Math.random() * categories[selectedCategory].words.length)
-        ]
-      const newHints = categories[selectedCategory].hints[newAnswer]
-      setAnswer(newAnswer)
-      setHints(newHints)
-      setGuesses([])
-      setCurrentGuess('')
-      setStatuses([])
-      setKeyStatuses({})
-      setGameOver(false)
-      setHintIndex(0)
+      const category = categories.find((cat) => cat.id === selectedCategory)
+      if (category && category.words.length > 0) {
+        const newAnswer =
+          category.words[Math.floor(Math.random() * category.words.length)]
+            .value
+        const newHints =
+          category.words.find((word) => word.value === newAnswer)?.hints || []
+        setAnswer(newAnswer)
+        setHints(newHints)
+        setGuesses([])
+        setCurrentGuess('')
+        setStatuses([])
+        setKeyStatuses({})
+        setGameOver(false)
+        setHintIndex(0)
+      }
     }
-  }, [selectedCategory])
+  }, [categories, selectedCategory])
 
   useEffect(() => {
     setNewWord()
@@ -165,27 +180,26 @@ const Board: React.FC = () => {
   if (!selectedCategory) {
     return (
       <div className="flex flex-wrap justify-center space-x-4 sm:space-x-8">
-        {Object.keys(categories).map((category) => (
+        {categories.map((category) => (
           <motion.button
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
             whileHover={{ scale: 1.1 }}
-            key={category}
+            key={category.id}
             type="button"
             onClick={() => {
-              setSelectedCategory(category)
-              setIsModalOpen(true)
+              setSelectedCategory(category.id)
             }}
             className="flex flex-col items-center space-y-2 p-4 my-4 border-2 border-[#f5f5f5] rounded-lg cursor-pointer"
           >
             <Image
-              src={categories[category].image}
-              alt={category}
+              src={category.image}
+              alt={category.name}
               width={50}
               height={50}
             />
-            <span>{category}</span>
+            <span>{category.name}</span>
           </motion.button>
         ))}
       </div>
@@ -201,13 +215,15 @@ const Board: React.FC = () => {
       />
       <div className="flex items-center space-x-2">
         <Image
-          src={categories[selectedCategory].image}
+          src={
+            categories.find((cat) => cat.id === selectedCategory)?.image || ''
+          }
           alt={selectedCategory}
           width={50}
           height={50}
         />
         <span className="text-xl font-extrabold uppercase">
-          {selectedCategory}
+          {categories.find((cat) => cat.id === selectedCategory)?.name || ''}
         </span>
       </div>
       {guesses.map((guess, i) => (
