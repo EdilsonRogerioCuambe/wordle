@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 export async function GET() {
   try {
     const categories = await prisma.category.findMany({
-      orderBy: { id: 'asc' },
+      include: { words: true },
     })
 
     return NextResponse.json(categories)
