@@ -5,7 +5,7 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Wordle Clone',
+  title: 'Adivinhe a Palavra',
   description: 'Tente adivinhar a palavra secreta!',
   icons: {
     icon: '/favicon.ico',
