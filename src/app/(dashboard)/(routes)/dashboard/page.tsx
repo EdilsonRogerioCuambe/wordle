@@ -6,7 +6,9 @@ import { wordsColumns } from './_components/words.columns'
 
 export default async function Dashboard() {
   const categories = await prisma.category.findMany()
-  const words = await prisma.word.findMany()
+  const words = await prisma.word.findMany({
+    include: { category: true },
+  })
   return (
     <>
       <h1 className="md:text-4xl text-2xl font-bold mb-8">Dashboard</h1>
