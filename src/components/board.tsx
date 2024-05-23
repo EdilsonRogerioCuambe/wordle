@@ -262,10 +262,10 @@ const Board = ({ categories }: { categories: Category[] }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="flex items-center capitalize space-x-2 text-lg"
+          className="flex items-center uppercase space-x-2 text-lg"
         >
           <span>Dica:</span>
-          <span className="text-green-400 font-extrabold">
+          <span className="text-cyan-400 font-extrabold">
             {hints[hintIndex - 1]}
           </span>
         </motion.div>
