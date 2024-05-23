@@ -217,14 +217,6 @@ const Board: React.FC = () => {
           />
           <div className="flex space-x-4">
             <button
-              type="button"
-              onClick={handleSubmit}
-              className={`px-4 py-2 bg-blue-500 text-white font-extrabold rounded ${currentGuess.length !== answer.length ? 'opacity-50 cursor-not-allowed' : ''}`}
-              disabled={currentGuess.length !== answer.length}
-            >
-              Verificar
-            </button>
-            <button
               title="Dica"
               type="button"
               onClick={handleHint}
@@ -271,7 +263,12 @@ const Board: React.FC = () => {
           Próxima Palavra
         </button>
       )}
-      <Keyboard onKeyClick={handleKeyClick} keyStatuses={keyStatuses} />
+      <Keyboard
+        onKeyClick={handleKeyClick}
+        keyStatuses={keyStatuses}
+        currentGuessLength={currentGuess.length}
+        answerLength={answer.length}
+      />
     </div>
   )
 }
