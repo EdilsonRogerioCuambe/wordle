@@ -1,5 +1,5 @@
 'use client'
-import { Word } from '@prisma/client'
+import { Word, Category } from '@prisma/client'
 import { ArrowUpDown, MoreHorizontal, Pencil, Trash } from 'lucide-react'
 import { ColumnDef } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
@@ -13,7 +13,11 @@ import Link from 'next/link'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 
-export const wordsColumns: ColumnDef<Word>[] = [
+interface WordWithCategory extends Word {
+  category: Category
+}
+
+export const wordsColumns: ColumnDef<WordWithCategory>[] = [
   {
     accessorKey: 'id',
     header: 'ID',
@@ -35,6 +39,15 @@ export const wordsColumns: ColumnDef<Word>[] = [
       const { value } = row.original
 
       return <span className="capitalize">{value}</span>
+    },
+  },
+  {
+    accessorKey: 'category',
+    header: 'Categoria',
+    cell: ({ row }) => {
+      const { category } = row.original
+
+      return <span className="capitalize">{category.name}</span>
     },
   },
   {
