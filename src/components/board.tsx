@@ -175,7 +175,6 @@ const Board: React.FC = () => {
               type="button"
               onClick={handleSubmit}
               className={`px-4 py-2 bg-blue-500 text-white font-extrabold rounded ${currentGuess.length !== answer.length ? 'opacity-50 cursor-not-allowed' : ''}`}
-              disabled={currentGuess.length !== answer.length}
             >
               Verificar
             </button>
