@@ -125,7 +125,7 @@ const Board: React.FC = () => {
 
   if (!selectedCategory) {
     return (
-      <div className="flex flex-wrap justify-center space-x-4">
+      <div className="flex flex-wrap justify-center space-x-4 sm:space-x-8">
         {Object.keys(categories).map((category) => (
           <motion.button
             initial={{ opacity: 0 }}
@@ -135,7 +135,7 @@ const Board: React.FC = () => {
             key={category}
             type="button"
             onClick={() => setSelectedCategory(category)}
-            className="flex flex-col items-center space-y-2 p-4 border-2 border-[#f5f5f5] rounded-lg cursor-pointer"
+            className="flex flex-col items-center space-y-2 p-4 my-4 border-2 border-[#f5f5f5] rounded-lg cursor-pointer"
           >
             <Image
               src={categories[category].image}
