@@ -233,7 +233,7 @@ const Board: React.FC = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="flex items-center uppercase space-x-2 text-lg"
+          className="flex items-center capitalize space-x-2 text-lg"
         >
           <span>Dica:</span>
           <span className="text-green-400 font-extrabold">
