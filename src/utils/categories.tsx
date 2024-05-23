@@ -30,8 +30,6 @@ const categories = {
       'coruja',
       'pombo',
       'pavao',
-      'avestruz',
-      'veado',
     ],
     hints: {
       cachorro: [
