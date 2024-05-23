@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "rf -rf .next && next prisma generate && next build",
+    "build": "rm -rf .next && next prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "seed": "ts-node ./src/utils/seed.ts"
