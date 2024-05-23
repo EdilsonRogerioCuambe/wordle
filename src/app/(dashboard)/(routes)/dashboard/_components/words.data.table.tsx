@@ -11,7 +11,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-
 import {
   Table,
   TableBody,
@@ -23,6 +22,8 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
+import axios from 'axios'
+import toast from 'react-hot-toast'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -35,6 +36,31 @@ export function DataWordsTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [selectedRows, setSelectedRows] = useState<string[]>([])
+
+  const handleSelectRow = (id: string) => {
+    setSelectedRows((prev) => {
+      if (prev.includes(id)) {
+        return prev.filter((rowId) => rowId !== id)
+      } else {
+        return [...prev, id]
+      }
+    })
+  }
+
+  const handleDeleteSelected = async () => {
+    try {
+      await axios.delete('/api/words', {
+        data: { ids: selectedRows },
+      })
+      toast.success('Palavras deletadas com sucesso!')
+      setSelectedRows([])
+      window.location.reload()
+    } catch (error) {
+      console.error(error)
+      toast.error('Falha ao deletar palavras')
+    }
+  }
 
   const table = useReactTable({
     data,
@@ -62,14 +88,24 @@ export function DataWordsTable<TData, TValue>({
           }
           className="max-w-sm w-full bg-transparent border-2 text-[#f5f5f5] placeholder:text-[#f5f5f5] border-[#f5f5f5]"
         />
-        <Link href="/dashboard/add-word" passHref>
+        <div className="flex gap-x-2">
+          <Link href="/dashboard/add-word" passHref>
+            <Button
+              variant="outline"
+              className="bg-transparent transition-all duration-300 ease-in-out hover:text-[#f5f5f5] hover:bg-[#121214]"
+            >
+              Adicionar Nova Palavra
+            </Button>
+          </Link>
           <Button
             variant="outline"
+            onClick={handleDeleteSelected}
             className="bg-transparent transition-all duration-300 ease-in-out hover:text-[#f5f5f5] hover:bg-[#121214]"
+            disabled={selectedRows.length === 0}
           >
-            Adicionar Nova Palavra
+            Deletar Selecionadas
           </Button>
-        </Link>
+        </div>
       </div>
       <div className="my-4">
         <Table>
@@ -101,7 +137,15 @@ export function DataWordsTable<TData, TValue>({
                   className="hover:bg-[#202024] hover:rounded-lg cursor-pointer transition-colors duration-200 ease-in-out hover:text-[#f5f5f5]"
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
+                  onClick={() => handleSelectRow(row.id)}
                 >
+                  <TableCell>
+                    <Input
+                      type="checkbox"
+                      checked={selectedRows.includes(row.id)}
+                      onChange={() => handleSelectRow(row.id)}
+                    />
+                  </TableCell>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(

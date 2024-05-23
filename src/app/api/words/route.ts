@@ -35,3 +35,28 @@ export async function GET() {
     return new NextResponse('Failed to fetch words', { status: 500 })
   }
 }
+
+export async function DELETE(request: Request) {
+  const { ids } = await request.json()
+
+  if (!ids || !Array.isArray(ids)) {
+    return new NextResponse('Invalid request payload', { status: 400 })
+  }
+
+  try {
+    await prisma.word.deleteMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    })
+
+    return NextResponse.json({ message: 'Words deleted successfully!' })
+  } catch (error) {
+    if (error instanceof Error) {
+      return new NextResponse(error.message, { status: 500 })
+    }
+    return new NextResponse('Failed to delete words', { status: 500 })
+  }
+}

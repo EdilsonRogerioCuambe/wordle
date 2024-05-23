@@ -16,7 +16,7 @@ const categoriesIds = [
   },
   {
     id: '8534277c-fffc-48de-9870-cf638c9106c1',
-    name: 'Objectos',
+    name: 'Objetos',
   },
   {
     id: '6cd6abfd-0632-446d-8412-107fa7e08166',
