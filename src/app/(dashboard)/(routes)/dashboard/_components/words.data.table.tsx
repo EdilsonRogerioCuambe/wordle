@@ -25,42 +25,22 @@ import Link from 'next/link'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 
-interface DataTableProps<TData, TValue> {
+interface HasId {
+  id: string
+}
+
+interface DataTableProps<TData extends HasId, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
 }
 
-export function DataWordsTable<TData, TValue>({
+export function DataWordsTable<TData extends HasId, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [selectedRows, setSelectedRows] = useState<string[]>([])
-
-  const handleSelectRow = (id: string) => {
-    setSelectedRows((prev) => {
-      if (prev.includes(id)) {
-        return prev.filter((rowId) => rowId !== id)
-      } else {
-        return [...prev, id]
-      }
-    })
-  }
-
-  const handleDeleteSelected = async () => {
-    try {
-      await axios.delete('/api/words', {
-        data: { ids: selectedRows },
-      })
-      toast.success('Palavras deletadas com sucesso!')
-      setSelectedRows([])
-      window.location.reload()
-    } catch (error) {
-      console.error(error)
-      toast.error('Falha ao deletar palavras')
-    }
-  }
+  const [selectedWords, setSelectedWords] = useState<string[]>([])
 
   const table = useReactTable({
     data,
@@ -77,6 +57,26 @@ export function DataWordsTable<TData, TValue>({
     },
   })
 
+  const handleSelectWord = (id: string) => {
+    setSelectedWords((prevSelected) =>
+      prevSelected.includes(id)
+        ? prevSelected.filter((wordId) => wordId !== id)
+        : [...prevSelected, id],
+    )
+  }
+
+  const handleDeleteSelected = async () => {
+    try {
+      await axios.delete('/api/words', {
+        data: { ids: selectedWords },
+      })
+      toast.success('Palavras deletadas com sucesso!')
+      window.location.reload()
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <div className="text-[#f5f5f5] my-5 border-2 p-4 border-[#f5f5f5] rounded-lg">
       <div className="flex items-center py-4 justify-between gap-x-2">
@@ -88,45 +88,62 @@ export function DataWordsTable<TData, TValue>({
           }
           className="max-w-sm w-full bg-transparent border-2 text-[#f5f5f5] placeholder:text-[#f5f5f5] border-[#f5f5f5]"
         />
-        <div className="flex gap-x-2">
-          <Link href="/dashboard/add-word" passHref>
-            <Button
-              variant="outline"
-              className="bg-transparent transition-all duration-300 ease-in-out hover:text-[#f5f5f5] hover:bg-[#121214]"
-            >
-              Adicionar Nova Palavra
-            </Button>
-          </Link>
+        <Input
+          placeholder='Pesquisar palavra por "categoria"'
+          value={
+            (table.getColumn('category')?.getFilterValue() as string) ?? ''
+          }
+          onChange={(event) =>
+            table.getColumn('category')?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm w-full bg-transparent border-2 text-[#f5f5f5] placeholder:text-[#f5f5f5] border-[#f5f5f5]"
+        />
+        <Link href="/dashboard/add-word" passHref>
           <Button
             variant="outline"
-            onClick={handleDeleteSelected}
             className="bg-transparent transition-all duration-300 ease-in-out hover:text-[#f5f5f5] hover:bg-[#121214]"
-            disabled={selectedRows.length === 0}
           >
-            Deletar Selecionadas
+            Adicionar Nova Palavra
           </Button>
-        </div>
+        </Link>
       </div>
       <div className="my-4">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead
-                      key={header.id}
-                      className="text-[#c3c3cc] hover:text-[#f5f5f5] cursor-pointer"
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
-                  )
-                })}
+                <TableHead>
+                  <input
+                    title="Selecionar todas as palavras para deletar"
+                    type="checkbox"
+                    onChange={() => {
+                      const allIds = table
+                        .getRowModel()
+                        .rows.map((row) => row.original.id)
+                      if (selectedWords.length === allIds.length) {
+                        setSelectedWords([])
+                      } else {
+                        setSelectedWords(allIds)
+                      }
+                    }}
+                    checked={
+                      selectedWords.length === table.getRowModel().rows.length
+                    }
+                  />
+                </TableHead>
+                {headerGroup.headers.map((header) => (
+                  <TableHead
+                    key={header.id}
+                    className="text-[#c3c3cc] hover:text-[#f5f5f5] cursor-pointer"
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
@@ -137,13 +154,13 @@ export function DataWordsTable<TData, TValue>({
                   className="hover:bg-[#202024] hover:rounded-lg cursor-pointer transition-colors duration-200 ease-in-out hover:text-[#f5f5f5]"
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  onClick={() => handleSelectRow(row.id)}
                 >
                   <TableCell>
-                    <Input
+                    <input
+                      title="Selecionar palavra para deletar"
                       type="checkbox"
-                      checked={selectedRows.includes(row.id)}
-                      onChange={() => handleSelectRow(row.id)}
+                      checked={selectedWords.includes(row.original.id)}
+                      onChange={() => handleSelectWord(row.original.id)}
                     />
                   </TableCell>
                   {row.getVisibleCells().map((cell) => (
@@ -169,25 +186,35 @@ export function DataWordsTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end text-[#f5f5f5] space-x-2 py-4">
+      <div className="flex items-center justify-between text-[#f5f5f5] space-x-2 py-4">
         <Button
           variant="outline"
           size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
+          onClick={handleDeleteSelected}
           className="bg-transparent transition-all duration-300 ease-in-out hover:text-[#f5f5f5] hover:bg-[#121214]"
         >
-          Anterior
+          Deletar Selecionadas
         </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-          className="bg-transparent transition-all duration-300 ease-in-out hover:text-[#f5f5f5] hover:bg-[#121214]"
-        >
-          Próximo
-        </Button>
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+            className="bg-transparent transition-all duration-300 ease-in-out hover:text-[#f5f5f5] hover:bg-[#121214]"
+          >
+            Anterior
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+            className="bg-transparent transition-all duration-300 ease-in-out hover:text-[#f5f5f5] hover:bg-[#121214]"
+          >
+            Próximo
+          </Button>
+        </div>
       </div>
     </div>
   )

@@ -12,7 +12,9 @@ export default async function Home() {
 
   return (
     <main className="flex flex-col items-center min-h-screen justify-center my-10">
-      <h1 className="text-4xl font-bold my-4 uppercase">Adivinhe a Palavra</h1>
+      <h1 className="md:text-4xl text-center text-2xl font-bold my-4 uppercase">
+        Adivinhe a Palavra
+      </h1>
       <Board categories={categories} />
     </main>
   )
