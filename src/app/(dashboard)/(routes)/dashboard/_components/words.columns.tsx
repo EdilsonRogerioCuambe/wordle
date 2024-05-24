@@ -42,12 +42,12 @@ export const wordsColumns: ColumnDef<WordWithCategory>[] = [
     },
   },
   {
-    accessorKey: 'category',
+    accessorKey: 'name',
     header: 'Categoria',
     cell: ({ row }) => {
-      const { category } = row.original
+      const { name } = row.original.category
 
-      return <span className="capitalize">{category.name}</span>
+      return <span className="capitalize">{name}</span>
     },
   },
   {

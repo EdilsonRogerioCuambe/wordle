@@ -88,16 +88,6 @@ export function DataWordsTable<TData extends HasId, TValue>({
           }
           className="max-w-sm w-full bg-transparent border-2 text-[#f5f5f5] placeholder:text-[#f5f5f5] border-[#f5f5f5]"
         />
-        <Input
-          placeholder='Pesquisar palavra por "categoria"'
-          value={
-            (table.getColumn('category')?.getFilterValue() as string) ?? ''
-          }
-          onChange={(event) =>
-            table.getColumn('category')?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm w-full bg-transparent border-2 text-[#f5f5f5] placeholder:text-[#f5f5f5] border-[#f5f5f5]"
-        />
         <Link href="/dashboard/add-word" passHref>
           <Button
             variant="outline"
